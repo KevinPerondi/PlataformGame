@@ -14,7 +14,12 @@ class BootState extends Phaser.State {
         this.game.load.image('smoke', 'assets/smoke.png')
         this.game.load.image('title', 'assets/title.png')
 
+        // virtual joystick
+        this.load.spritesheet('vstick_button', 'assets/button_action.png', 50, 50);
+        this.load.spritesheet('vstick_dpad', 'assets/button_dpad.png', 105, 50);
+
         this.game.load.spritesheet('explosion', 'assets/explosion.png', 56, 56)
+        this.game.load.spritesheet('coin', 'assets/coin.png',32,32)
 
         // map
         /*his.game.load.tilemap('level1', 'assets/level1.json', null, Phaser.Tilemap.TILED_JSON);

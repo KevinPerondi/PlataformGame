@@ -1,6 +1,6 @@
 
 class Player extends Phaser.Sprite {
-    constructor(game, x, y, img, tint, bullets, keys) {
+    constructor(game, x, y, img, keys) {
         super(game, x, y, img)
         //this.tint = tint
         //this.health = config.PLAYER_HEALTH
@@ -28,8 +28,6 @@ class Player extends Phaser.Sprite {
             fire: game.input.keyboard.addKey(keys.fire)
         }
     
-        this.bullets = bullets
-
         // particulas de fumaça
         this.emitter = game.add.emitter(0, 0, 40);
         this.emitter.makeParticles( [ 'smoke' ] );
@@ -46,6 +44,10 @@ class Player extends Phaser.Sprite {
                 Math.atan2(this.body.velocity.y, this.body.velocity.x) * 180/Math.PI
         }
     }    
+
+    jump(){
+        this.body.velocity.y = -250;
+    }
 
     // move e rotaciona, como em Asteroids
     moveAndTurn() {
@@ -66,7 +68,8 @@ class Player extends Phaser.Sprite {
         //this.angleByAtan()
     }   
     
-    fireBullet() {
+
+   /* fireBullet() {
         if (!this.alive)
             return;
     
@@ -88,11 +91,11 @@ class Player extends Phaser.Sprite {
                 }
             }
         }    
-    } 
+    } */
     
     update() {
         this.moveAndTurn()
-        this.fireBullet()
+        //this.fireBullet()
         //this.emitter.emitParticle()
 
         this.emitter.emitX = this.x;
