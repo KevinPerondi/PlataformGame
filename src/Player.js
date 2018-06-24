@@ -2,103 +2,131 @@
 class Player extends Phaser.Sprite {
     constructor(game, x, y, img, keys) {
         super(game, x, y, img)
-        //this.tint = tint
-        //this.health = config.PLAYER_HEALTH
+
+        this.score = 0;
+        this.health = 5;
+
+        this.damageDelay = 60;
+        this.damageDelayCount = 60;
+
         this.anchor.setTo(0.5, 0.5)
+        this.scale.setTo(0.5, 0.5)
 
         game.physics.enable(this, Phaser.Physics.ARCADE);
         this.body.collideWorldBounds = true;
-        this.body.gravity.y = 1000;
 
-        this.body.drag.set(config.PLAYER_DRAG)
-        this.body.maxVelocity.set(config.PLAYER_MAX_VELOCITY)
-        this.body.mass = 0.1
-        this.body.friction.setTo(0,0)
+        this.velocity = 200;
+        this.jumpTimer = 0;
+
+        this.getKey = false;
+
+        this.animations.add('right', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24
+            , 25, 26, 27, 28, 29, 30, 31, 32], 10, true);
+
+
+        //this.body.drag.set(config.PLAYER_DRAG)
+        //this.body.mass = 0.1
+        //this.body.friction.setTo(0, 0)
         //this.body.bounce.setTo(1,1)
-        this.body.setSize(32, 32, 16, 16)
         //this.body.isCircle = true
-        this.nextFire = 0
         //this.body.allowRotation = false
-    
+
         this.cursors = {
             left: game.input.keyboard.addKey(keys.left),
             right: game.input.keyboard.addKey(keys.right),
-            up: game.input.keyboard.addKey(keys.up),
-            down: game.input.keyboard.addKey(keys.down),        
-            fire: game.input.keyboard.addKey(keys.fire)
+            jump: game.input.keyboard.addKey(keys.jump)
         }
-    
+
         // particulas de fumaça
-        this.emitter = game.add.emitter(0, 0, 40);
-        this.emitter.makeParticles( [ 'smoke' ] );
+        /*this.emitter = game.add.emitter(0, 0, 40);
+        this.emitter.makeParticles(['smoke']);
         this.emitter.setXSpeed(0, 0)
         this.emitter.setYSpeed(0, 0)
         this.emitter.setAlpha(1, 0, 1000);
         this.emitter.setScale(0.7, 0, 0.7, 0, 1000);
-        this.emitter.start(false, 1000, 50);
-    }        
+        this.emitter.start(false, 1000, 50);*/
+    }
 
-    angleByAtan() {
+    /*angleByAtan() {
         if ((this.body.velocity.x != 0) || (this.body.velocity.y != 0)) {
-            this.angle = 
-                Math.atan2(this.body.velocity.y, this.body.velocity.x) * 180/Math.PI
+            this.angle =
+                Math.atan2(this.body.velocity.y, this.body.velocity.x) * 180 / Math.PI
         }
-    }    
+    }*/
 
-    jump(){
-        this.body.velocity.y = -250;
+    jump() {
+        if (this.body.onFloor()) {
+            this.body.velocity.y = -250;
+        }
     }
 
     // move e rotaciona, como em Asteroids
     moveAndTurn() {
-        if (!this.alive)
+        if (!this.alive) {
             return
+        } else {
+            this.body.velocity.x = 0;
+            if (this.cursors.left.isDown) {
+                this.body.velocity.x = -this.velocity;
+                this.animations.play('right');
+            }
+            else if (this.cursors.right.isDown) {
+                this.body.velocity.x = this.velocity;
+                this.animations.play('right');
+            }
+            this.animations.paused = true;
+        }
+
 
         //  mouse ou touch
-        if (this.game.input.mousePointer.isDown || this.game.input.pointer1.isDown) {
+        /*if (this.game.input.mousePointer.isDown || this.game.input.pointer1.isDown) {
             let x = this.game.input.mousePointer.x + this.game.input.pointer1.x
             let y = this.game.input.mousePointer.y + this.game.input.pointer1.y
 
             if (!Phaser.Rectangle.contains(this.body, this.game.input.x, this.game.input.y)) {
                 //this.game.physics.arcade.moveToPointer(this, config.PLAYER_MAX_VELOCITY);
-                this.rotation = this.game.physics.arcade.moveToPointer(this, 60, 
+                this.rotation = this.game.physics.arcade.moveToPointer(this, 60,
                     this.game.input.activePointer, config.PLAYER_MAX_VELOCITY);
             }
-        }
+        }*/
         //this.angleByAtan()
-    }   
-    
+    }
 
-   /* fireBullet() {
-        if (!this.alive)
-            return;
-    
-        if (this.cursors.fire.isDown) {
-            if (this.game.time.time > this.nextFire) {
-                var bullet = this.bullets.getFirstExists(false)
-                if (bullet) {
-                    bullet.reset(this.x, this.y)
-                    bullet.lifespan = config.BULLET_LIFE_SPAN
-                    bullet.rotation = this.rotation
-                    bullet.body.bounce.setTo(1,1)
-                    bullet.body.friction.setTo(0,0)
-                    this.game.physics.arcade.velocityFromRotation(
-                        bullet.rotation + this.game.rnd.realInRange(-config.BULLET_ANGLE_ERROR, config.BULLET_ANGLE_ERROR), 
-                        config.BULLET_VELOCITY, bullet.body.velocity
-                    )
-                    // fire rate
-                    this.nextFire = this.game.time.time + config.BULLET_FIRE_RATE
-                }
-            }
-        }    
-    } */
-    
+
+    /* fireBullet() {
+         if (!this.alive)
+             return;
+     
+         if (this.cursors.fire.isDown) {
+             if (this.game.time.time > this.nextFire) {
+                 var bullet = this.bullets.getFirstExists(false)
+                 if (bullet) {
+                     bullet.reset(this.x, this.y)
+                     bullet.lifespan = config.BULLET_LIFE_SPAN
+                     bullet.rotation = this.rotation
+                     bullet.body.bounce.setTo(1,1)
+                     bullet.body.friction.setTo(0,0)
+                     this.game.physics.arcade.velocityFromRotation(
+                         bullet.rotation + this.game.rnd.realInRange(-config.BULLET_ANGLE_ERROR, config.BULLET_ANGLE_ERROR), 
+                         config.BULLET_VELOCITY, bullet.body.velocity
+                     )
+                     // fire rate
+                     this.nextFire = this.game.time.time + config.BULLET_FIRE_RATE
+                 }
+             }
+         }    
+     } */
+
     update() {
-        this.moveAndTurn()
-        //this.fireBullet()
-        //this.emitter.emitParticle()
+        if (this.alive) {
+            this.moveAndTurn();
+            //this.fireBullet()
+            //this.emitter.emitParticle()
 
-        this.emitter.emitX = this.x;
-        this.emitter.emitY = this.y;    
+            /*this.emitter.emitX = this.x;
+            this.emitter.emitY = this.y;*/
+        } else {
+            this.destroy();
+        }
     }
 }

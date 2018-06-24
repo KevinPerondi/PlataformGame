@@ -4,7 +4,7 @@ class GameState extends BaseState {
 
     create() {
         this.game.physics.startSystem(Phaser.Physics.ARCADE)
-        this.game.physics.arcade.gravity.y = 100;
+        this.game.physics.arcade.gravity.y = 250;
 
         let skyWidth = this.game.cache.getImage('background1').width
         let skyHeight = this.game.cache.getImage('background1').height
@@ -26,24 +26,22 @@ class GameState extends BaseState {
         this.game.add.existing(vpad)
 
         let jumpButton = vpad.addActionButton(
-            this.game.width-100, this.game.height-100, 'vstick_button',
+            this.game.width - 100, this.game.height - 100, 'vstick_button',
             () => this.player1.jump())
-        
+
         let dpadButton = vpad.addDPadButton(
-            155, this.game.height-100, 'vstick_dpad', {
-                leftPressed:  () => this.player1.cursors.left.isDown  = true,
-                leftReleased: () => this.player1.cursors.left.isDown  = false,
+            155, this.game.height - 100, 'vstick_dpad', {
+                leftPressed: () => this.player1.cursors.left.isDown = true,
+                leftReleased: () => this.player1.cursors.left.isDown = false,
                 rightPressed: () => this.player1.cursors.right.isDown = true,
-                rightReleased:() => this.player1.cursors.right.isDown = false
+                rightReleased: () => this.player1.cursors.right.isDown = false
             })
 
         this.player1 = new Player(this.game, 100, 100,
-            'plane1',{
+            'player', {
                 left: Phaser.Keyboard.LEFT,
                 right: Phaser.Keyboard.RIGHT,
-                up: Phaser.Keyboard.UP,
-                down: Phaser.Keyboard.DOWN,
-                fire: Phaser.Keyboard.UP//L
+                jump: Phaser.Keyboard.UP
             })
 
         this.game.add.existing(this.player1)
@@ -51,7 +49,7 @@ class GameState extends BaseState {
 
         this.hud = {
             text1: this.createText(this.game.width * 1 / 9, 50, 'PLAYER 1: 20'),
-            text2: this.createText(this.game.width * 8 / 9, 50, 'PLAYER 2: 20')
+            playerScore: this.createText(this.game.width * 1 / 9, 70, 'Pontuação: 0')
             //fps: createHealthText(game.width*6/9, 50, 'FPS'),
         }
         this.updateHud()
@@ -64,7 +62,7 @@ class GameState extends BaseState {
 
         //game.time.advancedTiming = true;
         this.initFullScreenButtons()
-    
+
     }
 
     loadFile() {
@@ -78,23 +76,45 @@ class GameState extends BaseState {
         this.map = this.game.add.tilemap('fase1');
         this.map.addTilesetImage('groundTiles');
         this.map.addTilesetImage('background');
-        this.map.addTilesetImage('coin');
+        this.map.addTilesetImage('coin2');
 
         this.mapLayer = this.map.createLayer('Background Layer');
         this.mapLayer = this.map.createLayer('Tiles Layer 1');
-        this.map.setCollisionBetween(0,17,true,'Tiles Layer 1');
+        this.map.setCollisionBetween(0, 17, true, 'Tiles Layer 1');
         //this.map.setCollisionBetween(0,true,'Tiles Layer 1')
 
         this.coins = this.game.add.group();
         this.coins.enableBody = true;
 
-        this.map.createFromObjects('Object Layer', 51, 'coin', 0, true, true, this.coins);
+        this.keys = this.game.add.group();
+        this.keys.enableBody = true;
 
-        this.coins.forEach(function(coin){
-            coin.animations.add('spin', [0, 1, 2, 3, 4, 5], 10, true);
+
+        this.map.createFromObjects('Object Layer', 55, 'coin', 0, true, true, this.coins);
+        this.map.createFromObjects('Object Layer', 54, 'key', 0, true, true, this.keys);
+
+        this.keys.forEach(function (key) {
+            key.body.allowGravity = false;
+        });
+
+        //iniciando a animacao de cada coin
+        this.coins.forEach(function (coin) {
+            coin.animations.add('spin', [0, 1, 2, 3, 4, 5, 6, 7], 10, true);
             coin.animations.play('spin');
+            coin.score = 1;
             coin.body.allowGravity = false;
         })
+
+        this.batEnemies = this.game.add.group()
+        this.batEnemies.enableBody = true;
+
+        this.map.createFromObjects('Enemies Layer', 51, 'batEnemy', 0, true, true, this.batEnemies);
+
+        this.batEnemies.forEach(function (bat) {
+            bat.animations.add('wings', [1, 0, 2], 10, true);
+            bat.animations.play('wings')
+            bat.body.allowGravity = false;
+        });
 
         this.mapLayer.resizeWorld();
 
@@ -132,10 +152,42 @@ class GameState extends BaseState {
         this.game.physics.arcade.collide(this.player1, this.mapLayer);
 
         // colisao com serras
-        this.game.physics.arcade.collide(this.player1, this.obstacles, this.hitObstacle, null, this)
+        //this.game.physics.arcade.collide(this.player1, this.obstacles, this.hitObstacle, null, this)
+
+        //colisao com colecionaveis
+        this.game.physics.arcade.overlap(this.player1, this.coins, this.coinCollide, null, this)
+        this.game.physics.arcade.overlap(this.player1, this.keys, this.keyCollide, null, this)
     }
 
-    killBullet(bullet, wall) {
+    coinCollide(player, coin) {
+        player.score++;
+        coin.destroy();
+        this.updateHud();
+    }
+
+    keyCollide(player, key) {
+        player.getKey = true;
+        key.destroy();
+    }
+
+
+    updateHud() {
+        this.hud.text1.text = `PLAYER 1: ${this.player1.health}`
+        this.hud.playerScore.text = `Pontuação: ${this.player1.score}`
+    }
+
+    render() {
+        //obstacles.forEach(function(obj) { game.debug.body(obj) })
+        this.game.debug.body(this.player1)
+        //game.debug.body(player2)
+    }
+
+
+
+
+    /*
+    
+        killBullet(bullet, wall) {
         //wall.kill()
         bullet.kill()
         this.createExplosion(bullet.x, bullet.y)
@@ -156,22 +208,7 @@ class GameState extends BaseState {
         }
     }
 
-
-
-    updateHud() {
-        this.hud.text1.text = `PLAYER 1: ${this.player1.health}`
-    }
-
-    render() {
-        //obstacles.forEach(function(obj) { game.debug.body(obj) })
-        this.game.debug.body(this.player1)
-        //game.debug.body(player2)
-    }
-
-
-
-
-    /*hitSpikes(sprite, tile) {
+    hitSpikes(sprite, tile) {
         sprite.alpha = 0.5
         tile.alpha = 0
         // força atualizaçao dos tiles no map
