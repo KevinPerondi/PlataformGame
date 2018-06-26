@@ -18,7 +18,7 @@ class BootState extends Phaser.State {
         this.game.load.image('key','assets/key.png')
 
         //player
-        this.game.load.spritesheet('player', 'assets/player.png',110,188)
+        this.game.load.spritesheet('player', 'assets/playerV2.png',282,424)
 
         // virtual joystick
         this.load.spritesheet('vstick_button', 'assets/button_action.png', 50, 50);

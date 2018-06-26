@@ -10,7 +10,7 @@ class Player extends Phaser.Sprite {
         this.damageDelayCount = 60;
 
         this.anchor.setTo(0.5, 0.5)
-        this.scale.setTo(0.5, 0.5)
+        this.scale.setTo(0.2, 0.2)
 
         game.physics.enable(this, Phaser.Physics.ARCADE);
         this.body.collideWorldBounds = true;
@@ -20,8 +20,8 @@ class Player extends Phaser.Sprite {
 
         this.getKey = false;
 
-        this.animations.add('right', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24
-            , 25, 26, 27, 28, 29, 30, 31, 32], 10, true);
+        this.animations.add('right', [0, 1, 2, 3, 4, 5], 8, true);
+        this.animations.add('left', [11, 10, 9, 8, 7, 6], 8, true);
 
 
         //this.body.drag.set(config.PLAYER_DRAG)
@@ -68,13 +68,14 @@ class Player extends Phaser.Sprite {
             this.body.velocity.x = 0;
             if (this.cursors.left.isDown) {
                 this.body.velocity.x = -this.velocity;
-                this.animations.play('right');
+                this.animations.play('left');
             }
             else if (this.cursors.right.isDown) {
                 this.body.velocity.x = this.velocity;
                 this.animations.play('right');
+            }else{
+                this.animations.stop()
             }
-            this.animations.paused = true;
         }
 
 
