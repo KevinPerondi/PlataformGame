@@ -1,3 +1,5 @@
+'use strict'
+
 class SpaceTwo extends Phaser.Sprite {
     constructor(game, x, y, img) {
         super(game, x, y, img);
@@ -5,6 +7,7 @@ class SpaceTwo extends Phaser.Sprite {
         game.physics.enable(this, Phaser.Physics.ARCADE);
         this.enableBody = true;
         this.body.allowGravity = false;
+        this.body.collideWorldBounds = true;
 
         this.anchor.setTo(0.5, 0.5);
 
@@ -27,21 +30,24 @@ class SpaceTwo extends Phaser.Sprite {
     }
 
     update() {
-        //console.log(this.count)
-        if (this.count < (this.moveDelay / 2)) {
-            this.walkRight();
-            this.count++;
-        } else if (this.count == (this.moveDelay / 2)) {
-            this.turnSprite();
-            this.body.velocity.x = 0;
-            this.count++;
-        } else if (this.count > (this.moveDelay / 2) && this.count < this.moveDelay) {
-            this.walkLeft();
-            this.count++;
+        if (!this.alive) {
+            this.destroy();
         } else {
-            this.count = 0;
-            this.turnSprite();
-            this.body.velocity.x = 0;
+            if (this.count < (this.moveDelay / 2)) {
+                this.walkRight();
+                this.count++;
+            } else if (this.count == (this.moveDelay / 2)) {
+                this.turnSprite();
+                this.body.velocity.x = 0;
+                this.count++;
+            } else if (this.count > (this.moveDelay / 2) && this.count < this.moveDelay) {
+                this.walkLeft();
+                this.count++;
+            } else {
+                this.count = 0;
+                this.turnSprite();
+                this.body.velocity.x = 0;
+            }
         }
     }
 }

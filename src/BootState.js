@@ -10,6 +10,9 @@ class BootState extends Phaser.State {
         //objects
         this.game.load.spritesheet('coin', 'assets/coin2.png',21,21)
         this.game.load.image('key','assets/key.png')
+        this.game.load.image('goldBag','assets/goldBag.png');
+        this.game.load.image('heart','assets/heart.png');
+        this.game.load.spritesheet('door', 'assets/door.png',90,96);
 
         //player
         this.game.load.spritesheet('player', 'assets/playerV2.png',282,424)
@@ -24,6 +27,7 @@ class BootState extends Phaser.State {
         
         //enemies
         this.game.load.spritesheet('batEnemy','assets/batEnemy.png',32,32);
+        this.game.load.spritesheet('redFire','assets/redFire.png',40,38);
         this.game.load.image('ovni','assets/disco.png');
         this.game.load.image('nave1','assets/nave1.png');
         this.game.load.image('nave2','assets/nave2.png');

@@ -1,3 +1,5 @@
+'use strict'
+
 class Ovni extends Phaser.Sprite {
     constructor(game, x, y, img) {
         super(game, x, y, img);
@@ -6,8 +8,8 @@ class Ovni extends Phaser.Sprite {
         this.enableBody = true;
         this.body.allowGravity = false;
 
-        this.anchor.setTo(0.5,0.5);
-        this.scale.setTo(3.5,3.5);
+        this.anchor.setTo(0.5, 0.5);
+        this.scale.setTo(3.5, 3.5);
 
         this.damage = 2;
         this.velocity = 2;
@@ -29,21 +31,24 @@ class Ovni extends Phaser.Sprite {
     }
 
     update() {
-        //console.log(this.count)
-        if (this.count < (this.moveDelay / 2)) {
-            this.walkRight();
-            this.count++;
-        } else if (this.count == (this.moveDelay / 2)) {
-            this.turnSprite();
-            this.body.velocity.x = 0;
-            this.count++;
-        } else if (this.count > (this.moveDelay/2) && this.count < this.moveDelay){
-            this.walkLeft();
-            this.count++;
-        }else{
-            this.count = 0;
-            this.turnSprite();
-            this.body.velocity.x = 0;
+        if (!this.alive) {
+            this.destroy();
+        } else {
+            if (this.count < (this.moveDelay / 2)) {
+                this.walkRight();
+                this.count++;
+            } else if (this.count == (this.moveDelay / 2)) {
+                this.turnSprite();
+                this.body.velocity.x = 0;
+                this.count++;
+            } else if (this.count > (this.moveDelay / 2) && this.count < this.moveDelay) {
+                this.walkLeft();
+                this.count++;
+            } else {
+                this.count = 0;
+                this.turnSprite();
+                this.body.velocity.x = 0;
+            }
         }
     }
 
