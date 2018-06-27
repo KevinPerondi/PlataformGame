@@ -2100,6 +2100,30 @@
                  "width":32,
                  "x":334,
                  "y":200
+                }, 
+                {
+                 "gid":73,
+                 "height":50,
+                 "id":249,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":50,
+                 "x":384.434801958166,
+                 "y":216.366266132621
+                }, 
+                {
+                 "gid":77,
+                 "height":66,
+                 "id":250,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":50,
+                 "x":1070.85121602289,
+                 "y":267.620886981402
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -2107,7 +2131,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":249,
+ "nextobjectid":251,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.1.5",
@@ -2241,6 +2265,32 @@
          "tilecount":2,
          "tileheight":96,
          "tilewidth":90
+        }, 
+        {
+         "columns":4,
+         "firstgid":73,
+         "image":"groundMonster.png",
+         "imageheight":50,
+         "imagewidth":200,
+         "margin":0,
+         "name":"groundMonster",
+         "spacing":0,
+         "tilecount":4,
+         "tileheight":50,
+         "tilewidth":50
+        }, 
+        {
+         "columns":2,
+         "firstgid":77,
+         "image":"plantMonster.png",
+         "imageheight":66,
+         "imagewidth":100,
+         "margin":0,
+         "name":"plantMonster",
+         "spacing":0,
+         "tilecount":2,
+         "tileheight":66,
+         "tilewidth":50
         }],
  "tilewidth":32,
  "type":"map",

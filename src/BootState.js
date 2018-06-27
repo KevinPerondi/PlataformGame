@@ -28,6 +28,9 @@ class BootState extends Phaser.State {
         //enemies
         this.game.load.spritesheet('batEnemy','assets/batEnemy.png',32,32);
         this.game.load.spritesheet('redFire','assets/redFire.png',40,38);
+        this.game.load.spritesheet('groundMonster','assets/groundMonster.png',50,50);
+        this.game.load.spritesheet('plantMonster','assets/plantMonster.png',50,66);
+        this.game.load.image('poison','assets/poison.png');
         this.game.load.image('ovni','assets/disco.png');
         this.game.load.image('nave1','assets/nave1.png');
         this.game.load.image('nave2','assets/nave2.png');

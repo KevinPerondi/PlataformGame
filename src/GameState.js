@@ -20,6 +20,8 @@ class GameState extends BaseState {
         //this.rain.alpha = 0.4
         this.rain.fixedToCamera = true
 
+        this.hitPlayer = 0;
+
         this.createTileMap()
 
         let vpad = new VirtualGamepad(this.game)
@@ -134,12 +136,16 @@ class GameState extends BaseState {
         this.spaceOneEnemies = this.game.add.group();
         this.spaceTwoEnemies = this.game.add.group();
         this.redFire = this.game.add.group();
+        this.groundMonsters = this.game.add.group();
+        this.plantMonsters = this.game.add.group();
 
         this.map.createFromObjects('Enemies Layer', 51, 'batEnemy', 0, true, true, this.batEnemies, Bat);
         this.map.createFromObjects('Enemies Layer', 63, 'ovni', 0, true, true, this.ovniEnemies, Ovni);
         this.map.createFromObjects('Enemies Layer', 64, 'nave1', 0, true, true, this.spaceOneEnemies, SpaceOne);
         this.map.createFromObjects('Enemies Layer', 65, 'nave2', 0, true, true, this.spaceTwoEnemies, SpaceTwo);
         this.map.createFromObjects('Enemies Layer', 66, 'redFire', 0, true, true, this.redFire, Fire);
+        this.map.createFromObjects('Enemies Layer', 73, 'groundMonster', 0, true, true, this.groundMonsters, GroundMonster);
+        this.map.createFromObjects('Enemies Layer', 77, 'plantMonster', 0, true, true, this.plantMonsters, PlantMonster);
 
     }
 
@@ -161,12 +167,17 @@ class GameState extends BaseState {
         this.game.physics.arcade.collide(this.spaceOneEnemies, this.mapLayer);
         this.game.physics.arcade.collide(this.spaceTwoEnemies, this.mapLayer);
         this.game.physics.arcade.collide(this.redFire, this.mapLayer);
+        this.game.physics.arcade.collide(this.groundMonsters, this.mapLayer);
+        this.game.physics.arcade.collide(this.plantMonsters, this.mapLayer);
+        this.game.physics.arcade.collide(this.plantMonsters.poisons, this.mapLayer);
 
         //foice colidindo
         this.game.physics.arcade.collide(this.player1.scythes, this.batEnemies, this.weaponHitEnemy);
         this.game.physics.arcade.collide(this.player1.scythes, this.ovniEnemies, this.weaponHitEnemy);
         this.game.physics.arcade.collide(this.player1.scythes, this.spaceOneEnemies, this.weaponHitEnemy);
         this.game.physics.arcade.collide(this.player1.scythes, this.spaceTwoEnemies, this.weaponHitEnemy);
+        this.game.physics.arcade.collide(this.player1.scythes, this.groundMonsters, this.weaponHitEnemy);
+        this.game.physics.arcade.collide(this.player1.scythes, this.plantMonsters, this.weaponHitEnemy);
         this.game.physics.arcade.collide(this.player1.scythes, this.mapLayer);
 
 
@@ -176,6 +187,9 @@ class GameState extends BaseState {
         this.game.physics.arcade.collide(this.player1, this.spaceOneEnemies, this.enemyCollide);
         this.game.physics.arcade.collide(this.player1, this.spaceTwoEnemies, this.enemyCollide);
         this.game.physics.arcade.overlap(this.player1, this.redFire, this.fireCollide);
+        this.game.physics.arcade.overlap(this.player1, this.groundMonsters, this.enemyCollide);
+        this.game.physics.arcade.overlap(this.player1, this.plantMonsters, this.enemyCollide);
+        this.game.physics.arcade.collide(this.player1, this.plantMonsters, this.poisonHitPlayer);
 
         //colisao com colecionaveis
         this.game.physics.arcade.overlap(this.player1, this.coins, this.collectibleCollide, null, this);
@@ -190,6 +204,13 @@ class GameState extends BaseState {
         this.updateHud();
         this.rain.tilePosition.x += 1;
         this.collisions();
+    }
+
+    poisonHitPlayer(player, plant) {
+        plant.poisons.forEach(function (player,poison) {
+            player.health -= poison.damage;
+            poison.kill();
+        });
     }
 
     weaponHitEnemy(scythe, enemy) {
@@ -273,6 +294,14 @@ class GameState extends BaseState {
 
         this.spaceOneEnemies.forEach(function (ship) {
             this.game.debug.body(ship)
+        }, this);
+
+        this.groundMonsters.forEach(function (monster) {
+            this.game.debug.body(monster)
+        }, this);
+
+        this.plantMonsters.forEach(function (plant) {
+            this.game.debug.body(plant)
         }, this);
 
         this.spaceTwoEnemies.forEach(function (ship) {
