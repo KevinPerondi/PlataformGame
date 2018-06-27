@@ -4,7 +4,7 @@ class GameState extends BaseState {
 
     create() {
         this.game.physics.startSystem(Phaser.Physics.ARCADE)
-        this.game.physics.arcade.gravity.y = 250;
+        this.game.physics.arcade.gravity.y = 650;
 
         let skyWidth = this.game.cache.getImage('background1').width
         let skyHeight = this.game.cache.getImage('background1').height
@@ -29,6 +29,11 @@ class GameState extends BaseState {
             this.game.width - 100, this.game.height - 100, 'vstick_button',
             () => this.player1.jump())
 
+        let shootButton = vpad.addActionButton(
+            this.game.width - 210, this.game.height - 100, 'vstick_shootpad',
+            () => this.player1.shootScythe())
+
+
         let dpadButton = vpad.addDPadButton(
             155, this.game.height - 100, 'vstick_dpad', {
                 leftPressed: () => this.player1.cursors.left.isDown = true,
@@ -37,12 +42,17 @@ class GameState extends BaseState {
                 rightReleased: () => this.player1.cursors.right.isDown = false
             })
 
+        this.scythes = this.game.add.group();
+        this.scythes.enableBody = true;
+
         this.player1 = new Player(this.game, 100, 100,
             'player', {
                 left: Phaser.Keyboard.LEFT,
                 right: Phaser.Keyboard.RIGHT,
                 jump: Phaser.Keyboard.UP
-            })
+            }, this.scythes)
+
+
 
         this.game.add.existing(this.player1)
         this.game.camera.follow(this.player1, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1); // smooth        
@@ -105,16 +115,8 @@ class GameState extends BaseState {
             coin.body.allowGravity = false;
         })
 
-        this.batEnemies = this.game.add.group()
-        this.batEnemies.enableBody = true;
 
-        this.map.createFromObjects('Enemies Layer', 51, 'batEnemy', 0, true, true, this.batEnemies);
-
-        this.batEnemies.forEach(function (bat) {
-            bat.animations.add('wings', [1, 0, 2], 10, true);
-            bat.animations.play('wings')
-            bat.body.allowGravity = false;
-        });
+        this.createEnemies();
 
         this.mapLayer.resizeWorld();
 
@@ -131,6 +133,45 @@ class GameState extends BaseState {
         this.mapLayer.resizeWorld()*/
     }
 
+    createEnemies() {
+        this.batEnemies = this.game.add.group()
+        this.batEnemies.enableBody = true;
+
+        this.ovniEnemies = this.game.add.group()
+
+        this.spaceOneEnemies = this.game.add.group()
+
+        this.spaceTwoEnemies = this.game.add.group()
+
+        this.map.createFromObjects('Enemies Layer', 51, 'batEnemy', 0, true, true, this.batEnemies);
+        this.map.createFromObjects('Enemies Layer', 63, 'ovni', 0, true, true, this.ovniEnemies, Ovni);
+        this.map.createFromObjects('Enemies Layer', 64, 'nave1', 0, true, true, this.spaceOneEnemies, SpaceOne);
+        this.map.createFromObjects('Enemies Layer', 65, 'nave2', 0, true, true, this.spaceTwoEnemies, SpaceTwo);
+
+
+
+        this.batEnemies.forEach(function (bat) {
+            bat.animations.add('wings', [1, 0, 2], 10, true);
+            bat.animations.play('wings')
+            bat.damage = 1;
+            bat.body.allowGravity = false;
+        });
+
+        /*this.ovniEnemies.forEach(function (ovni) {
+            ovni.damage = 2;
+            ovni.body.allowGravity = false;
+        });*/
+
+        /*this.spaceOneEnemies.forEach(function (spacecraft) {
+            spacecraft.damage = 2;
+            spacecraft.body.allowGravity = false;
+        });*/
+
+        /*this.spaceTwoEnemies.forEach(function (spacecraft) {
+            spacecraft.damage = 4;
+            spacecraft.body.allowGravity = false;
+        });*/
+    }
 
     toggleFullScreen() {
         this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL
@@ -142,6 +183,7 @@ class GameState extends BaseState {
     }
 
     update() {
+        this.updateHud();
         //    hud.fps.text = `FPS ${game.time.fps}`
         this.rain.tilePosition.x += 0.3
 
@@ -151,18 +193,29 @@ class GameState extends BaseState {
         // colisoes com mapa
         this.game.physics.arcade.collide(this.player1, this.mapLayer);
 
+        //colisao com inimigos
+        this.game.physics.arcade.collide(this.player1, this.batEnemies, this.enemyCollide);
+        this.game.physics.arcade.collide(this.player1, this.ovniEnemies, this.enemyCollide);
+        this.game.physics.arcade.collide(this.player1, this.spaceOneEnemies, this.enemyCollide);
+        this.game.physics.arcade.collide(this.player1, this.spaceTwoEnemies, this.enemyCollide);
+
         // colisao com serras
         //this.game.physics.arcade.collide(this.player1, this.obstacles, this.hitObstacle, null, this)
 
         //colisao com colecionaveis
-        this.game.physics.arcade.overlap(this.player1, this.coins, this.coinCollide, null, this)
+        this.game.physics.arcade.overlap(this.player1, this.coins, this.collectibleCollide, null, this)
         this.game.physics.arcade.overlap(this.player1, this.keys, this.keyCollide, null, this)
     }
 
-    coinCollide(player, coin) {
-        player.score++;
-        coin.destroy();
+    collectibleCollide(player, item) {
+        player.score += item.score;
+        item.destroy();
         this.updateHud();
+    }
+
+    enemyCollide(player, enemy) {
+        player.health -= enemy.damage;
+        enemy.destroy();
     }
 
     keyCollide(player, key) {
@@ -170,16 +223,41 @@ class GameState extends BaseState {
         key.destroy();
     }
 
+    /*batCollide(player, bat) {
+        player.health -= bat.damage;
+        bat.destroy()
+    }
+
+    ovniCollide(player, ovni) {
+        player.health -= ovni.damage;
+        ovni.destroy();
+    }
+
+    spacecraftOneCollide(player, spacecraft) {
+        player.health -= spacecraft.damage;
+        spacecraft.destroy();
+    }
+
+    spacecraftTwoCollide(player, spacecraft) {
+        player.health -= spacecraft.damage;
+        spacecraft.destroy();
+    } */
 
     updateHud() {
-        this.hud.text1.text = `PLAYER 1: ${this.player1.health}`
-        this.hud.playerScore.text = `Pontuação: ${this.player1.score}`
+        if (this.player1.health <= 0) {
+            this.hud.text1.text = `PLAYER 1: 0`
+        } else {
+            this.hud.text1.text = `PLAYER 1: ${this.player1.health}`
+            this.hud.playerScore.text = `Pontuação: ${this.player1.score}`
+        }
     }
 
     render() {
         //obstacles.forEach(function(obj) { game.debug.body(obj) })
         this.game.debug.body(this.player1)
         //game.debug.body(player2)
+        this.coins.forEach(function(coin){
+            this.game.debug.body(coin)},this);
     }
 
 

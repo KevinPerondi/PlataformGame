@@ -4,13 +4,7 @@ class BootState extends Phaser.State {
 
     preload() {
         this.game.load.image('background1','assets/background1.jpeg')
-        this.game.load.image('sky', 'assets/sky.png')
-        this.game.load.image('shot', 'assets/shot.png')
-        this.game.load.image('wall', 'assets/wall.png')
-        this.game.load.image('fog', 'assets/fog.png')
         this.game.load.image('rain', 'assets/rain.png')
-        this.game.load.image('saw', 'assets/saw.png')
-        this.game.load.image('smoke', 'assets/smoke.png')
         this.game.load.image('streetTitle', 'assets/streetTitle.png')
 
         //objects
@@ -23,12 +17,16 @@ class BootState extends Phaser.State {
         // virtual joystick
         this.load.spritesheet('vstick_button', 'assets/button_action.png', 50, 50);
         this.load.spritesheet('vstick_dpad', 'assets/button_dpad.png', 105, 50);
+        this.load.spritesheet('vstick_shootpad', 'assets/shootButton.png', 50, 50);
 
-        this.game.load.spritesheet('explosion', 'assets/explosion.png', 56, 56)
+        //shot
+        this.game.load.spritesheet('shot', 'assets/scythe.png', 450, 135);
         
-
         //enemies
         this.game.load.spritesheet('batEnemy','assets/batEnemy.png',32,32);
+        this.game.load.image('ovni','assets/disco.png');
+        this.game.load.image('nave1','assets/nave1.png');
+        this.game.load.image('nave2','assets/nave2.png');
 
         // map
         /*his.game.load.tilemap('level1', 'assets/level1.json', null, Phaser.Tilemap.TILED_JSON);

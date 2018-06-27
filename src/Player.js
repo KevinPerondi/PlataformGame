@@ -1,10 +1,10 @@
 
 class Player extends Phaser.Sprite {
-    constructor(game, x, y, img, keys) {
+    constructor(game, x, y, img, keys, scytheGroup) {
         super(game, x, y, img)
 
         this.score = 0;
-        this.health = 5;
+        this.health = 20;
 
         this.damageDelay = 60;
         this.damageDelayCount = 60;
@@ -19,6 +19,8 @@ class Player extends Phaser.Sprite {
         this.jumpTimer = 0;
 
         this.getKey = false;
+
+        this.facing = "right";
 
         this.animations.add('right', [0, 1, 2, 3, 4, 5], 8, true);
         this.animations.add('left', [11, 10, 9, 8, 7, 6], 8, true);
@@ -54,9 +56,14 @@ class Player extends Phaser.Sprite {
         }
     }*/
 
+    shootScythe(){
+        scythe = new Scythe(this.game,this.x,this.y,'shot',this.facing);
+        //this.scytheGroup.add.existing(scythe);
+    }
+
     jump() {
         if (this.body.onFloor()) {
-            this.body.velocity.y = -250;
+            this.body.velocity.y = -450;
         }
     }
 
@@ -69,10 +76,12 @@ class Player extends Phaser.Sprite {
             if (this.cursors.left.isDown) {
                 this.body.velocity.x = -this.velocity;
                 this.animations.play('left');
+                this.facing = "left";
             }
             else if (this.cursors.right.isDown) {
                 this.body.velocity.x = this.velocity;
                 this.animations.play('right');
+                this.facing = "right";
             }else{
                 this.animations.stop()
             }
@@ -119,6 +128,10 @@ class Player extends Phaser.Sprite {
      } */
 
     update() {
+        if(this.health <= 0){
+            this.kill();
+        }
+
         if (this.alive) {
             this.moveAndTurn();
             //this.fireBullet()

@@ -18,7 +18,7 @@ class Game extends Phaser.Game {
             'game-container')
         // registrando as telas (Phaser.State) do jogo
         this.state.add('Boot', BootState, false)
-        //this.state.add('Title', TitleState, false)
+        this.state.add('Title', TitleState, false)
         this.state.add('GameState1', GameState, false)
         this.state.add('GameState2', GameState, false)
         this.state.add('GameState3', GameState, false)
