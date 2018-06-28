@@ -2167,16 +2167,43 @@
          "tilewidth":21
         }, 
         {
+         "columns":1,
          "firstgid":63,
-         "source":"disco.tsx"
+         "image":"disco.png",
+         "imageheight":35,
+         "imagewidth":50,
+         "margin":0,
+         "name":"disco",
+         "spacing":0,
+         "tilecount":1,
+         "tileheight":35,
+         "tilewidth":50
         }, 
         {
+         "columns":1,
          "firstgid":64,
-         "source":"nave1.tsx"
+         "image":"nave1.png",
+         "imageheight":35,
+         "imagewidth":50,
+         "margin":0,
+         "name":"nave1",
+         "spacing":0,
+         "tilecount":1,
+         "tileheight":35,
+         "tilewidth":50
         }, 
         {
+         "columns":1,
          "firstgid":65,
-         "source":"nave2.tsx"
+         "image":"nave2.png",
+         "imageheight":35,
+         "imagewidth":50,
+         "margin":0,
+         "name":"nave2",
+         "spacing":0,
+         "tilecount":1,
+         "tileheight":35,
+         "tilewidth":50
         }, 
         {
          "columns":3,

@@ -11,7 +11,7 @@ class Boss extends Phaser.Sprite {
 
         //this.anchor.setTo(0.5, 0.5);
 
-        this.health = 1;
+        this.health = 10;
 
         this.animations.add('moveBoss', [0, 1, 2, 3, 4, 5, 6, 7], 10, true);
         this.animations.play('moveBoss');
