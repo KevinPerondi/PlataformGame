@@ -20,8 +20,6 @@ class GameState extends BaseState {
         //this.rain.alpha = 0.4
         this.rain.fixedToCamera = true
 
-        this.hitPlayer = 0;
-
         this.createTileMap()
 
         let vpad = new VirtualGamepad(this.game)
@@ -46,12 +44,30 @@ class GameState extends BaseState {
 
         //this.createScythes();
 
-        this.player1 = new Player(this.game, 100, 100,
-            'player', {
-                left: Phaser.Keyboard.LEFT,
-                right: Phaser.Keyboard.RIGHT,
-                jump: Phaser.Keyboard.UP
-            });
+        if (config.LEVEL == 3) {
+            this.player1 = new Player(this.game, 1500, 2050,
+                'player', {
+                    left: Phaser.Keyboard.LEFT,
+                    right: Phaser.Keyboard.RIGHT,
+                    jump: Phaser.Keyboard.UP
+                }, config.PLAYERSCORE);
+        } else if (config.LEVEL == 4) {
+            this.player1 = new Player(this.game, 1350, 1650,
+                'player', {
+                    left: Phaser.Keyboard.LEFT,
+                    right: Phaser.Keyboard.RIGHT,
+                    jump: Phaser.Keyboard.UP
+                }, config.PLAYERSCORE);
+        }
+        else {
+            this.player1 = new Player(this.game, 100, 100,
+                'player', {
+                    left: Phaser.Keyboard.LEFT,
+                    right: Phaser.Keyboard.RIGHT,
+                    jump: Phaser.Keyboard.UP
+                }, config.PLAYERSCORE);
+        }
+
 
 
 
@@ -84,7 +100,7 @@ class GameState extends BaseState {
     createTileMap() {
         // TODO implementar leitura do arquivo de tilemap e objetos
 
-        this.map = this.game.add.tilemap('fase1');
+        this.map = this.game.add.tilemap(`fase${config.LEVEL}`)
         this.map.addTilesetImage('groundTiles');
         this.map.addTilesetImage('background');
         this.map.addTilesetImage('coin2');
@@ -103,14 +119,10 @@ class GameState extends BaseState {
 
     createCollectables() {
         this.coins = this.game.add.group();
-
         this.keys = this.game.add.group();
         this.keys.enableBody = true;
-
         this.goldBags = this.game.add.group();
-
         this.hearts = this.game.add.group();
-
         this.doors = this.game.add.group();
 
         this.map.createFromObjects('Object Layer', 55, 'coin', 0, true, true, this.coins, Coin);
@@ -123,11 +135,6 @@ class GameState extends BaseState {
             key.body.allowGravity = false;
         });
 
-        this.goldBags.forEach(function (goldBag) {
-            goldBag.score = 50;
-            goldBag.body.allowGravity = false;
-        });
-
     }
 
     createEnemies() {
@@ -138,6 +145,7 @@ class GameState extends BaseState {
         this.redFire = this.game.add.group();
         this.groundMonsters = this.game.add.group();
         this.plantMonsters = this.game.add.group();
+        this.bosses = this.game.add.group();
 
         this.map.createFromObjects('Enemies Layer', 51, 'batEnemy', 0, true, true, this.batEnemies, Bat);
         this.map.createFromObjects('Enemies Layer', 63, 'ovni', 0, true, true, this.ovniEnemies, Ovni);
@@ -146,6 +154,7 @@ class GameState extends BaseState {
         this.map.createFromObjects('Enemies Layer', 66, 'redFire', 0, true, true, this.redFire, Fire);
         this.map.createFromObjects('Enemies Layer', 73, 'groundMonster', 0, true, true, this.groundMonsters, GroundMonster);
         this.map.createFromObjects('Enemies Layer', 77, 'plantMonster', 0, true, true, this.plantMonsters, PlantMonster);
+        this.map.createFromObjects('Enemies Layer', 79, 'boss', 0, true, true, this.bosses, Boss);
 
     }
 
@@ -178,6 +187,7 @@ class GameState extends BaseState {
         this.game.physics.arcade.overlap(this.player1.scythes, this.spaceTwoEnemies, this.weaponHitEnemy);
         this.game.physics.arcade.overlap(this.player1.scythes, this.groundMonsters, this.weaponHitEnemy);
         this.game.physics.arcade.overlap(this.player1.scythes, this.plantMonsters, this.weaponHitEnemy);
+        this.game.physics.arcade.overlap(this.player1.scythes, this.bosses, this.scytheHitBoss);
         this.game.physics.arcade.collide(this.player1.scythes, this.mapLayer);
 
 
@@ -186,12 +196,15 @@ class GameState extends BaseState {
         this.game.physics.arcade.collide(this.player1, this.ovniEnemies, this.enemyCollide);
         this.game.physics.arcade.collide(this.player1, this.spaceOneEnemies, this.enemyCollide);
         this.game.physics.arcade.collide(this.player1, this.spaceTwoEnemies, this.enemyCollide);
-        this.game.physics.arcade.overlap(this.player1, this.redFire, this.fireCollide);
-        this.game.physics.arcade.overlap(this.player1, this.groundMonsters, this.enemyCollide);
-        this.game.physics.arcade.overlap(this.player1, this.plantMonsters, this.enemyCollide);
+        this.game.physics.arcade.overlap(this.player1, this.redFire, this.fireCollide, null, this);
+        this.game.physics.arcade.overlap(this.player1, this.groundMonsters, this.enemyCollide, null, this);
+        this.game.physics.arcade.overlap(this.player1, this.plantMonsters, this.enemyCollide, null, this);
         this.plantMonsters.forEach(function (plant) {
             this.game.physics.arcade.overlap(this.player1, plant.poisons, this.poisonHitPlayer);
-        },this);
+        }, this);
+        this.plantMonsters.forEach(function (plant) {
+            this.game.physics.arcade.collide(plant.poisons, this.mapLayer, this.shotCollideMap);
+        }, this);
 
         //colisao com colecionaveis
         this.game.physics.arcade.overlap(this.player1, this.coins, this.collectibleCollide, null, this);
@@ -200,15 +213,51 @@ class GameState extends BaseState {
         this.game.physics.arcade.overlap(this.player1, this.hearts, this.heartCollide, null, this);
         //colidindo com a porta
         this.game.physics.arcade.overlap(this.player1, this.doors, this.doorCollide, null, this);
+
+        //colisao com boss
+        this.game.physics.arcade.overlap(this.player1, this.bosses, this.playerTouchBoss, null, this);
+        this.bosses.forEach(function (boss) {
+            this.game.physics.arcade.overlap(this.player1, boss.shots, this.poisonHitPlayer);
+        }, this);
+        this.bosses.forEach(function (boss) {
+            this.game.physics.arcade.collide(boss.shots, this.mapLayer, this.shotCollideMap);
+        }, this);
+    }
+
+    loadNextLevel() {
+        config.PLAYERSCORE = this.player1.score;
+        if (config.LEVEL == 4) {
+            this.state.start('Title');
+            //config.LEVEL = 1;
+            //this.game.state.restart();
+        } else {
+            config.LEVEL++;
+            this.game.state.restart();
+        }
     }
 
     update() {
-        if(!this.player1.alive){
+        if (!this.player1.alive) {
             this.game.camera.follow(null); // smooth   
+            config.PLAYERSCORE = 0;
+            this.game.state.restart();
         }
         this.updateHud();
         this.rain.tilePosition.x += 1;
         this.collisions();
+    }
+
+    scytheHitBoss(scythe,boss){
+        scythe.kill();
+        boss.health--;
+    }
+
+    shotCollideMap(shot, map) {
+        shot.kill();
+    }
+
+    playerTouchBoss(player, boss) {
+        player.kill();
     }
 
     poisonHitPlayer(player, poison) {
@@ -228,7 +277,7 @@ class GameState extends BaseState {
 
     doorCollide(player, door) {
         if (player.getKey == true) {
-            this.state.start('GameState1');
+            this.loadNextLevel();
         }
     }
 
@@ -267,8 +316,6 @@ class GameState extends BaseState {
     }
 
     render() {
-        //obstacles.forEach(function(obj) { game.debug.body(obj) })
-
         this.game.debug.body(this.player1);
 
         this.coins.forEach(function (coin) {

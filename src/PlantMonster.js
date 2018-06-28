@@ -16,8 +16,8 @@ class PlantMonster extends Phaser.Sprite {
 
         this.damage = 1;
 
-        this.shotCount = 60;
-        this.shotDelay = 150;
+        this.shotCount = 80;
+        this.shotDelay = 100;
 
         this.poisons = game.add.group();
 

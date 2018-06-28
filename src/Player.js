@@ -1,10 +1,10 @@
 'use strict'
 
 class Player extends Phaser.Sprite {
-    constructor(game, x, y, img, keys) {
+    constructor(game, x, y, img, keys, score) {
         super(game, x, y, img)
 
-        this.score = 0;
+        this.score = score;
         this.health = 20;
 
         this.damageDelay = 60;
