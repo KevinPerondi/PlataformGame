@@ -44,6 +44,16 @@ class GameState extends BaseState {
 
         //this.createScythes();
 
+        let backgroundSound;
+        if(config.LEVEL == 4){
+
+        }else{
+            backgroundSound = this.game.add.audio('sewer');
+            backgroundSound.loop = true;
+            //backgroundSound.volume -= 0.8;
+            backgroundSound.play();
+        }
+
         if (config.LEVEL == 3) {
             this.player1 = new Player(this.game, 1500, 2050,
                 'player', {
@@ -226,6 +236,7 @@ class GameState extends BaseState {
 
     loadNextLevel() {
         config.PLAYERSCORE = this.player1.score;
+        backgroundSound.stop();
         if (config.LEVEL == 4) {
             this.state.start('Title');
             //config.LEVEL = 1;
@@ -240,6 +251,7 @@ class GameState extends BaseState {
         if (!this.player1.alive) {
             this.game.camera.follow(null); // smooth   
             config.PLAYERSCORE = 0;
+            backgroundSound.stop();
             this.game.state.restart();
         }
         this.updateHud();
@@ -247,7 +259,7 @@ class GameState extends BaseState {
         this.collisions();
     }
 
-    scytheHitBoss(scythe,boss){
+    scytheHitBoss(scythe, boss) {
         scythe.kill();
         boss.health--;
     }
