@@ -9,7 +9,7 @@ class Coin extends Phaser.Sprite {
         this.body.allowGravity = false;
         this.body.collideWorldBounds = true;
 
-        this.anchor.setTo(0.5,0.5);
+        //this.anchor.setTo(0.5,0.5);
         this.score = 1;
 
         this.animations.add('spin', [0, 1, 2, 3, 4, 5, 6, 7], 10, true);

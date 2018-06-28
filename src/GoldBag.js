@@ -9,7 +9,7 @@ class GoldBag extends Phaser.Sprite {
         this.body.allowGravity = false;
         this.body.collideWorldBounds = true;
 
-        this.anchor.setTo(0.5,0.5);
+        //this.anchor.setTo(0.5,0.5);
         this.score = 50;
 
     }

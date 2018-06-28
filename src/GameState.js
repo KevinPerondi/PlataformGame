@@ -59,7 +59,7 @@ class GameState extends BaseState {
         this.game.camera.follow(this.player1, Phaser.Camera.FOLLOW_LOCKON, 0.1, 0.1); // smooth        
 
         this.hud = {
-            text1: this.createText(this.game.width * 1 / 9, 50, 'PLAYER 1: 20'),
+            text1: this.createText(this.game.width * 1 / 9, 50, 'Health: 20'),
             playerScore: this.createText(this.game.width * 8 / 9, 50, 'Pontuação: 0')
             //fps: createHealthText(game.width*6/9, 50, 'FPS'),
         }
@@ -172,12 +172,12 @@ class GameState extends BaseState {
         this.game.physics.arcade.collide(this.plantMonsters.poisons, this.mapLayer);
 
         //foice colidindo
-        this.game.physics.arcade.collide(this.player1.scythes, this.batEnemies, this.weaponHitEnemy);
-        this.game.physics.arcade.collide(this.player1.scythes, this.ovniEnemies, this.weaponHitEnemy);
-        this.game.physics.arcade.collide(this.player1.scythes, this.spaceOneEnemies, this.weaponHitEnemy);
-        this.game.physics.arcade.collide(this.player1.scythes, this.spaceTwoEnemies, this.weaponHitEnemy);
-        this.game.physics.arcade.collide(this.player1.scythes, this.groundMonsters, this.weaponHitEnemy);
-        this.game.physics.arcade.collide(this.player1.scythes, this.plantMonsters, this.weaponHitEnemy);
+        this.game.physics.arcade.overlap(this.player1.scythes, this.batEnemies, this.weaponHitEnemy);
+        this.game.physics.arcade.overlap(this.player1.scythes, this.ovniEnemies, this.weaponHitEnemy);
+        this.game.physics.arcade.overlap(this.player1.scythes, this.spaceOneEnemies, this.weaponHitEnemy);
+        this.game.physics.arcade.overlap(this.player1.scythes, this.spaceTwoEnemies, this.weaponHitEnemy);
+        this.game.physics.arcade.overlap(this.player1.scythes, this.groundMonsters, this.weaponHitEnemy);
+        this.game.physics.arcade.overlap(this.player1.scythes, this.plantMonsters, this.weaponHitEnemy);
         this.game.physics.arcade.collide(this.player1.scythes, this.mapLayer);
 
 
@@ -189,7 +189,9 @@ class GameState extends BaseState {
         this.game.physics.arcade.overlap(this.player1, this.redFire, this.fireCollide);
         this.game.physics.arcade.overlap(this.player1, this.groundMonsters, this.enemyCollide);
         this.game.physics.arcade.overlap(this.player1, this.plantMonsters, this.enemyCollide);
-        this.game.physics.arcade.collide(this.player1, this.plantMonsters, this.poisonHitPlayer);
+        this.plantMonsters.forEach(function (plant) {
+            this.game.physics.arcade.overlap(this.player1, plant.poisons, this.poisonHitPlayer);
+        },this);
 
         //colisao com colecionaveis
         this.game.physics.arcade.overlap(this.player1, this.coins, this.collectibleCollide, null, this);
@@ -201,20 +203,21 @@ class GameState extends BaseState {
     }
 
     update() {
+        if(!this.player1.alive){
+            this.game.camera.follow(null); // smooth   
+        }
         this.updateHud();
         this.rain.tilePosition.x += 1;
         this.collisions();
     }
 
-    poisonHitPlayer(player, plant) {
-        plant.poisons.forEach(function (player,poison) {
-            player.health -= poison.damage;
-            poison.kill();
-        });
+    poisonHitPlayer(player, poison) {
+        player.health -= poison.damage;
+        poison.kill();
     }
 
     weaponHitEnemy(scythe, enemy) {
-        scythe.kill();
+        //scythe.kill();
         enemy.kill();
     }
 
@@ -256,9 +259,9 @@ class GameState extends BaseState {
 
     updateHud() {
         if (this.player1.health <= 0) {
-            this.hud.text1.text = `PLAYER 1: 0`
+            this.hud.text1.text = `Health: 0`
         } else {
-            this.hud.text1.text = `PLAYER 1: ${this.player1.health}`
+            this.hud.text1.text = `Health: ${this.player1.health}`
             this.hud.playerScore.text = `Pontuação: ${this.player1.score}`
         }
     }

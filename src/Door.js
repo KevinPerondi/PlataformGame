@@ -9,7 +9,7 @@ class Door extends Phaser.Sprite {
         this.body.allowGravity = false;
         this.body.collideWorldBounds = true;
 
-        this.anchor.setTo(0.5,0.5);
+        //this.anchor.setTo(0.5,0.5);
 
         this.animations.add('closed',[0],0,true);
         this.animations.add('opened',[1],0,true);

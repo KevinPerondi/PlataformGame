@@ -27,7 +27,7 @@ class Poison extends Phaser.Sprite {
                 this.destroy();
             }
             else {
-                this.angle -= 2;
+                this.angle -= 3;
                 this.body.velocity.x = -this.velocity;
                 this.delayCount++;
             }
