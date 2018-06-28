@@ -13,7 +13,7 @@ class Scythe extends Phaser.Sprite {
         this.scale.setTo(0.2, 0.2)
 
         this.delayCount = 0;
-        this.delay = 90;
+        this.delay = 80;
 
         this.velocity = 300;
 
@@ -22,12 +22,18 @@ class Scythe extends Phaser.Sprite {
         this.animations.add('turnScythe', [0, 1, 2, 3], 20, true);
         this.animations.play('turnScythe');
 
+        this.scytheSound = game.add.audio('scytheSound');
+        this.scytheSound.volume -= 0.8;
+        this.scytheSound.play();
         game.add.existing(this);
     }
 
 
     update() {
         if (this.alive) {
+            /*if (this.delayCount == 0) {
+                this.scytheSound.play();
+            }*/
             if (this.delayCount == this.delay) {
                 this.destroy();
             }
@@ -42,6 +48,7 @@ class Scythe extends Phaser.Sprite {
             }
         }
         else {
+            this.scytheSound.stop();
             this.destroy();
         }
     }

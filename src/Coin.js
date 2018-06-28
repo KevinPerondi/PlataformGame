@@ -14,11 +14,14 @@ class Coin extends Phaser.Sprite {
 
         this.animations.add('spin', [0, 1, 2, 3, 4, 5, 6, 7], 10, true);
         this.animations.play('spin');
+
+        this.coinSound = game.add.audio('coinSound');
     }
 
 
     update(){
         if(!this.alive){
+            this.coinSound.play();
             this.destroy();
         }
     }

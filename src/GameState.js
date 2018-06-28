@@ -44,14 +44,17 @@ class GameState extends BaseState {
 
         //this.createScythes();
 
-        let backgroundSound;
-        if(config.LEVEL == 4){
-
-        }else{
-            backgroundSound = this.game.add.audio('sewer');
-            backgroundSound.loop = true;
-            //backgroundSound.volume -= 0.8;
-            backgroundSound.play();
+        this.backgroundSound;
+        if (config.LEVEL == 4) {
+            this.backgroundSound = this.game.add.audio('finalMapSound');
+            this.backgroundSound.loop = true;
+            this.backgroundSound.volume -= 0.8;
+            this.backgroundSound.play();
+        } else {
+            this.backgroundSound = this.game.add.audio('sewerSound');
+            this.backgroundSound.loop = true;
+            this.backgroundSound.volume -= 0.8;
+            this.backgroundSound.play();
         }
 
         if (config.LEVEL == 3) {
@@ -189,6 +192,9 @@ class GameState extends BaseState {
         this.game.physics.arcade.collide(this.groundMonsters, this.mapLayer);
         this.game.physics.arcade.collide(this.plantMonsters, this.mapLayer);
         this.game.physics.arcade.collide(this.plantMonsters.poisons, this.mapLayer);
+        this.plantMonsters.forEach(function (plant) {
+            this.game.physics.arcade.collide(plant.poisons, this.mapLayer, this.shotCollideMap);
+        }, this);
 
         //foice colidindo
         this.game.physics.arcade.overlap(this.player1.scythes, this.batEnemies, this.weaponHitEnemy);
@@ -212,9 +218,7 @@ class GameState extends BaseState {
         this.plantMonsters.forEach(function (plant) {
             this.game.physics.arcade.overlap(this.player1, plant.poisons, this.poisonHitPlayer);
         }, this);
-        this.plantMonsters.forEach(function (plant) {
-            this.game.physics.arcade.collide(plant.poisons, this.mapLayer, this.shotCollideMap);
-        }, this);
+
 
         //colisao com colecionaveis
         this.game.physics.arcade.overlap(this.player1, this.coins, this.collectibleCollide, null, this);
@@ -236,7 +240,7 @@ class GameState extends BaseState {
 
     loadNextLevel() {
         config.PLAYERSCORE = this.player1.score;
-        backgroundSound.stop();
+        this.backgroundSound.stop();
         if (config.LEVEL == 4) {
             this.state.start('Title');
             //config.LEVEL = 1;
@@ -251,7 +255,7 @@ class GameState extends BaseState {
         if (!this.player1.alive) {
             this.game.camera.follow(null); // smooth   
             config.PLAYERSCORE = 0;
-            backgroundSound.stop();
+            this.backgroundSound.stop();
             this.game.state.restart();
         }
         this.updateHud();
@@ -274,6 +278,7 @@ class GameState extends BaseState {
 
     poisonHitPlayer(player, poison) {
         player.health -= poison.damage;
+        player.playDamageSound();
         poison.kill();
     }
 
@@ -301,11 +306,13 @@ class GameState extends BaseState {
 
     fireCollide(player, fire) {
         player.health -= fire.damage;
+        player.playDamageSound();
         fire.reduceDamage();
     }
 
     enemyCollide(player, enemy) {
         player.health -= enemy.damage;
+        player.playDamageSound();
         enemy.kill();
     }
 

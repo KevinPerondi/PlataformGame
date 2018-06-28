@@ -36,6 +36,17 @@ class Player extends Phaser.Sprite {
             right: game.input.keyboard.addKey(keys.right),
             jump: game.input.keyboard.addKey(keys.jump)
         }
+
+        this.jumpSound = game.add.audio('jumpSound');
+        this.jumpSound.volume -= 0.8;
+
+        this.damageSound = game.add.audio('playerDamaged');
+        this.damageSound.volume -= 0.8;
+
+    }
+
+    playDamageSound(){
+        this.damageSound.play();
     }
 
     shootScythe() {
@@ -49,6 +60,7 @@ class Player extends Phaser.Sprite {
     jump() {
         if (this.body.onFloor()) {
             this.body.velocity.y = -460;
+            this.jumpSound.play();
         }
     }
 
@@ -67,7 +79,7 @@ class Player extends Phaser.Sprite {
                 this.animations.play('right');
                 this.facing = "right";
             } else {
-                this.animations.stop()
+                this.animations.stop();
             }
         }
     }

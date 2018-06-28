@@ -11,7 +11,7 @@ class Boss extends Phaser.Sprite {
 
         //this.anchor.setTo(0.5, 0.5);
 
-        this.health = 10;
+        this.health = 1;
 
         this.animations.add('moveBoss', [0, 1, 2, 3, 4, 5, 6, 7], 10, true);
         this.animations.play('moveBoss');
@@ -20,6 +20,8 @@ class Boss extends Phaser.Sprite {
 
         this.countDelay = 0;
         this.delay = 50;
+
+        this.killBossSound = game.add.audio('killBossSound');
     }
 
     bossShot(){
@@ -35,6 +37,7 @@ class Boss extends Phaser.Sprite {
 
     update() {
         if(this.health <= 0){
+            this.killBossSound.play();
             this.kill();
         }
 

@@ -12,10 +12,13 @@ class GoldBag extends Phaser.Sprite {
         //this.anchor.setTo(0.5,0.5);
         this.score = 50;
 
+        this.bagSound = game.add.audio('goldBagSound');
+
     }
 
     update(){
         if(!this.alive){
+            this.bagSound.play();
             this.destroy();
         }
     }

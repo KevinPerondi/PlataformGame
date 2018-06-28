@@ -48,6 +48,12 @@ class BootState extends Phaser.State {
         //audios
         this.game.load.audio('sewerSound', 'assets/sewerSounds.mp3');
         this.game.load.audio('jumpSound', 'assets/jumpSound.mp3');
+        this.game.load.audio('scytheSound', 'assets/scytheSound.mp3');
+        this.game.load.audio('finalMapSound', 'assets/finalMapSound.mp3');
+        this.game.load.audio('coinSound', 'assets/coinSound.mp3');
+        this.game.load.audio('goldBagSound', 'assets/goldBagSound.mp3');
+        this.game.load.audio('playerDamaged', 'assets/playerDamaged.mp3');
+        this.game.load.audio('killBossSound', 'assets/killBossSound.mp3');
     }
 
     create() {
