@@ -274,8 +274,8 @@
                  "type":"",
                  "visible":true,
                  "width":146.333333333333,
-                 "x":828,
-                 "y":2109
+                 "x":902.666666666667,
+                 "y":2194.33333333333
                 }, 
                 {
                  "gid":51,
@@ -416,7 +416,7 @@
          "tilecount":1,
          "tileheight":35,
          "tilewidth":50
-        },
+        }, 
         {
          "columns":3,
          "firstgid":66,
