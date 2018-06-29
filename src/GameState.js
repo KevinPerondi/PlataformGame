@@ -335,7 +335,7 @@ class GameState extends BaseState {
     }
 
     render() {
-        this.game.debug.body(this.player1);
+        /*this.game.debug.body(this.player1);
 
         this.coins.forEach(function (coin) {
             this.game.debug.body(coin)
@@ -387,6 +387,6 @@ class GameState extends BaseState {
 
         this.player1.scythes.forEach(function (scythe) {
             this.game.debug.body(scythe)
-        }, this);
+        }, this);*/
     }
 }
